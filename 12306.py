@@ -11,7 +11,7 @@ headers = {
     'Cache-Control': 'no-cache',
     'Connection': 'keep-alive',
     'Cookie':
-    '_uab_collina=161950018733183389546025; JSESSIONID=B1616DC91F8063A85E95617D7172B5E3; BIGipServerpool_passport=48497162.50215.0000; RAIL_EXPIRATION=1619797029807; RAIL_DEVICEID=qjLKRUPA4TDUugDY43e0t1qxLKxRc9X5Q6-bLQmMmP1D3uVySEuT7MbWpQMEf4rXa1cVH1v86SAzZfFQei86t5fFuLWgxm18IagYMpnoenmGbUwdhdjrM8Jc6cmZD0RQH6HgZuccurlI3fFJazAbucCjfltKThI0; route=6f50b51faa11b987e576cdb301e545c4; _jc_save_toStation=%u8386%u7530%2CPTS; _jc_save_toDate=2021-04-27; _jc_save_wfdc_flag=dc; _jc_save_fromDate=2021-05-01; current_captcha_type=C; BIGipServerotn=116392458.50210.0000; _jc_save_fromStation=%u4E0A%u6D77%u8679%u6865%2CAOH',
+    '_uab_collina=161950018733183389546025; JSESSIONID=DCC344B63849191FCE8B301D09E046E9; BIGipServerpool_passport=48497162.50215.0000; RAIL_EXPIRATION=1619797029807; RAIL_DEVICEID=qjLKRUPA4TDUugDY43e0t1qxLKxRc9X5Q6-bLQmMmP1D3uVySEuT7MbWpQMEf4rXa1cVH1v86SAzZfFQei86t5fFuLWgxm18IagYMpnoenmGbUwdhdjrM8Jc6cmZD0RQH6HgZuccurlI3fFJazAbucCjfltKThI0; route=6f50b51faa11b987e576cdb301e545c4; _jc_save_wfdc_flag=dc; current_captcha_type=C; BIGipServerotn=116392458.50210.0000; _jc_save_fromStation=%u4E0A%u6D77%2CSHH; _jc_save_toStation=%u6F6E%u6C55%2CCBQ; _jc_save_toDate=2021-04-30; _jc_save_fromDate=2021-05-07',
     'DNT': '1',
     'Host': 'kyfw.12306.cn',
     'If-Modified-Since': '0',
@@ -89,10 +89,10 @@ code_dic = zip_dic()
 
 ## 参数定义
 fromStationName = '上海虹桥'
-toStationName = '莆田'
+toStationName = '潮汕'
 fromStationTeleCode = code_dic[fromStationName]
 toStationTeleCode = code_dic[toStationName]
-dptDate = '2021-05-01'
+dptDate = '2021-05-07'
 trainNoList = []
 trainInfoList = []
 role = 'ADULT'
@@ -213,6 +213,7 @@ for disTrainNo in disTrainNoList:
         if tps['station_name'] == toStationName:
             toNo = i
 
+    intervalList = []
     # print(trainPassStopList)
     for i in range(0, fromNo + 1):
         iStation = trainPassStopList[i]
@@ -224,11 +225,21 @@ for disTrainNo in disTrainNoList:
             info = query(iStationTeleCode, jStationTeleCode, dptDate, role,
                          disTrainNo)
             if len(info) == 0 or info[0]['sold_out']:
-                print(iStation['station_name'] + ' 到：' + jStation['station_name'] +
-                  ' 无票')
+                # print(iStation['station_name'] + ' 到：' + jStation['station_name'] +
+                #   ' 无票')
                 continue
-            print(iStation['station_name'] + ' 到：' + jStation['station_name'] +
-                  ' 有票！！！！！！！！！！！')
+            # print(iStation['station_name'] + ' 到：' + jStation['station_name'] +
+                #   ' 有票！！！！！！！！！！！')
+            interval = {}
+            interval['fromStationName'] = iStation['station_name']
+            interval['toStationName'] = jStation['station_name']
+            interval['extaStation'] = j - i + 1 - (toNo - fromNo + 1)
 
+            ## 查询区间中的票价
+            queryTicketPrice(trainInfo['train_no'], fromStationNo, toStationNo, dptDate, seatTypes)
+
+            intervalList.append(interval)
+    intervalList = sorted(intervalList, key=lambda e: e['extaStation'])
+    print(intervalList)
 # print(queryByTrainNo('5l000D3145B0', fromStationTeleCode, toStationTeleCode, dptDate))
 # print(query(fromStationTeleCode, toStationTeleCode, dptDate, role, None))
