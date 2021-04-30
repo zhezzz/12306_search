@@ -29,10 +29,43 @@ headers = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 
+# seatTypeForHB = {
+#     SWZ: "9_商务座",
+#     TZ: "P_特等座",
+#     ZY: "M_一等座",
+#     ZE: "O_二等座",
+#     GR: "6_高级软卧",
+#     RW: "4_软卧",
+#     SRRB: "F_动卧",
+#     YW: "3_硬卧",
+#     RZ: "2_软座",
+#     YZ: "1_硬座",
+#     WZ: "1_无座",
+#     QT: "H_其他"
+# };
+# seatTypeCodeForName = {
+#     A: "高级动卧",
+#     I: "一等卧",
+#     J: "二等卧",
+#     P: "特等座",
+#     M: "一等座",
+#     O: "二等座",
+#     F: "动卧",
+#     "9": "商务座",
+#     "6": "高级软卧",
+#     "4": "软卧",
+#     "3": "硬卧",
+#     "2": "软座",
+#     "1": "硬座",
+#     H: "其他",
+#     WZ: "无座",
+#     W: "无座"
+# };
+
 
 # 处理获得的字符串，返回字典类型
 def zip_dic():
-    # 由于火车站使用三字码，所以我们需要先获取站点对应的三字码
+    # 车站使用三字码，先获取站点对应的三字码
     response = http.request(
         'GET',
         'https://kyfw.12306.cn/otn/resources/js/framework/station_name.js')
@@ -56,19 +89,19 @@ code_dic = zip_dic()
 
 ## 参数定义
 fromStationName = '上海虹桥'
-toStationName = '潮汕'
+toStationName = '莆田'
 fromStationTeleCode = code_dic[fromStationName]
 toStationTeleCode = code_dic[toStationName]
-dptDate = '2021-05-02'
+dptDate = '2021-05-01'
 trainNoList = []
 trainInfoList = []
 role = 'ADULT'
-## 高铁动车
+## 高铁还是动车
 GorD = 'G'
 ## 座位 ZE=二等座
 seatType = 'ZE'
 ## 指定的车次
-disTrainNoList = ['D2281']
+disTrainNoList = ['D3125']
 
 
 ## 查询列车经停站信息
@@ -191,9 +224,11 @@ for disTrainNo in disTrainNoList:
             info = query(iStationTeleCode, jStationTeleCode, dptDate, role,
                          disTrainNo)
             if len(info) == 0 or info[0]['sold_out']:
+                print(iStation['station_name'] + ' 到：' + jStation['station_name'] +
+                  ' 无票')
                 continue
             print(iStation['station_name'] + ' 到：' + jStation['station_name'] +
-                  ' 有票')
+                  ' 有票！！！！！！！！！！！')
 
 # print(queryByTrainNo('5l000D3145B0', fromStationTeleCode, toStationTeleCode, dptDate))
 # print(query(fromStationTeleCode, toStationTeleCode, dptDate, role, None))
